@@ -35,12 +35,12 @@ class Field(object):
 
 
 def String(value):
-    if isinstance(value, unicode):
-        return value
-    if isinstance(value, str):
+    try:
         return value.decode('utf-8', errors='ignore')
+    except UnicodeError:
+        pass
 
-    return unicode(value)
+    return str(value)
 
 
 class ObjectMeta(type):
@@ -50,7 +50,7 @@ class ObjectMeta(type):
         new_class._fields = {}
         new_class._required = []
         new_class._deserializers = {}
-        for k, v in attrs.items():
+        for k, v in list(attrs.items()):
             if isinstance(v, Field):
                 v.name = k
                 v.object = new_class
@@ -68,8 +68,7 @@ class ObjectMeta(type):
         return new_class
 
 
-class Object(object):
-    __metaclass__ = ObjectMeta
+class Object(object, metaclass=ObjectMeta):
     _fields = {}
 
     def __init__(self, **kwargs):
@@ -77,7 +76,7 @@ class Object(object):
             if fname not in kwargs:
                 raise ValidationError('{}.{} is required'.format(self.__class__.__name__, fname))
 
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
     def __getattr__(self, k):
@@ -87,7 +86,7 @@ class Object(object):
     def deserialize(cls, raw_data):
         data = {}
         deserializers = cls._deserializers
-        for k, v in raw_data.iteritems():
+        for k, v in raw_data.items():
             if v is not None:
                 data[k] = deserializers.get(k, identity)(v)
         return cls(**data)
@@ -101,7 +100,7 @@ class Object(object):
             return value
 
     def serialize(self):
-        return {k: self.serialize_value(v) for k, v in self.__dict__.iteritems() if v is not None}
+        return {k: self.serialize_value(v) for k, v in self.__dict__.items() if v is not None}
 
 
 class Array(object):
@@ -127,7 +126,7 @@ class EnumMeta(type):
         params['values'] = {}
         new_class = super(EnumMeta, mcs).__new__(mcs, name, bases, params)
 
-        for k, v in params.items():
+        for k, v in list(params.items()):
             if isinstance(v, int):
                 new_class.values[v] = k
                 setattr(new_class, k, new_class(v))
@@ -135,9 +134,7 @@ class EnumMeta(type):
         return new_class
 
 
-class Enum(object):
-    __metaclass__ = EnumMeta
-
+class Enum(object, metaclass=EnumMeta):
     values = {}
 
     def __init__(self, value=None):

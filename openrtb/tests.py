@@ -6,60 +6,60 @@ import openrtb
 import openrtb.base
 
 BRQ = {
-    'id': u'testbrqid',
+    'id': 'testbrqid',
     'tmax': 100,
     'at': 2,
     'app': {
-        'id': u'appid',
-        'name': u'appname',
-        'cat': [u'IAB1', u'IAB2-2'],
+        'id': 'appid',
+        'name': 'appname',
+        'cat': ['IAB1', 'IAB2-2'],
         'publisher': {
-            'id': u'pubid',
-            'cat': [u'IAB3']
+            'id': 'pubid',
+            'cat': ['IAB3']
         },
         'content': {
-            'id': u'contentid',
+            'id': 'contentid',
             'episode': 1,
             'producer': {
-                'id': u'pubid',
-                'cat': [u'IAB3']
+                'id': 'pubid',
+                'cat': ['IAB3']
             }
         },
-        'keywords': u'key,word'
+        'keywords': 'key,word'
     },
     'device': {
-        'ip': u'123.1.2.3',
-        'make': u'Apple',
+        'ip': '123.1.2.3',
+        'make': 'Apple',
         'devicetype': 1,
         'geo': {
             'lat': 54.3123,
             'lon': 32.12312,
-            'country': u'US'
+            'country': 'US'
         }
     },
     'user': {
-        'id': u'userid',
+        'id': 'userid',
         'yob': 2012,
         'data': [
             {
-                'id': u'dataid',
+                'id': 'dataid',
                 'segment': [{
-                                'id': u'segmentid',
-                                'name': u'yob',
-                                'value': u'2012',
+                                'id': 'segmentid',
+                                'name': 'yob',
+                                'value': '2012',
                                 }]
             }
         ]
     },
     'imp': [
         {
-            'id': u'testimpid',
-            'bidfloorcur': u'USD',
+            'id': 'testimpid',
+            'bidfloorcur': 'USD',
             'banner': {
                 'w': 320,
                 'h': 50,
                 'pos': 1,
-                'mimes': [u'mime/type']
+                'mimes': ['mime/type']
             }
         }
     ],
@@ -97,19 +97,19 @@ class TestFields(unittest.TestCase):
         self.assertEqual(O.v, '1')
 
     def test_unicode(self):
-        self.assertEqual(openrtb.base.String(u'uni'), u'uni')
+        self.assertEqual(openrtb.base.String('uni'), 'uni')
 
     def test_ascii(self):
-        self.assertEqual(openrtb.base.String('uni'), u'uni')
+        self.assertEqual(openrtb.base.String('uni'), 'uni')
 
     def test_utf8(self):
-        self.assertEqual(openrtb.base.String('утф'), u'утф')
+        self.assertEqual(openrtb.base.String('утф'), 'утф')
 
     def test_bad_utf8(self):
-        self.assertEqual(openrtb.base.String('x\xff'), u'x')
+        self.assertEqual(openrtb.base.String('x\xff'), 'x')
 
     def test_convert_to_unicode(self):
-        self.assertEqual(openrtb.base.String(1), u'1')
+        self.assertEqual(openrtb.base.String(1), '1')
 
     def test_default_array(self):
         self.assertEqual(openrtb.base.Array(int)(None), [])
